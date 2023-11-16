@@ -1,15 +1,24 @@
 from passlib.context import CryptContext
 
-from fastapi import FastAPI, Request, Depends, HTTPException, status
+from fastapi import FastAPI, Request, Depends, HTTPException, status, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import (
+    OAuth2PasswordBearer,
+    OAuth2PasswordRequestForm,
+    HTTPBasic,
+    HTTPBasicCredentials,
+)
 from starlette.responses import RedirectResponse
-from pydantic import BaseModel
-from sqlalchemy.orm import Session
+from starlette.status import HTTP_401_UNAUTHORIZED
+from pydantic import BaseModel, EmailStr
+import hashlib
+
+from sample_table import SampleUser
 
 app = FastAPI()
 templates = Jinja2Templates(directory='/src/api/templates')
+http_basic = HTTPBasic()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
@@ -19,25 +28,30 @@ class User(BaseModel):
     User model
     """
     username: str
-    email: Optional[str]
-    password: Optional[str]
+    email: EmailStr
+    password: str
 
 
 @app.get('/sayhello')
-async def sayhello(req: Request):
+async def sayhello(req: Request) -> Jinja2Templates:
     return templates.TemplateResponse(
         'sayhello.html',
         {'request': req, 'name': 'fubii'}
     )
 
 
+@app.exception_handler(404)
+async def not_found(req: Request, exc: HTTPException) -> Jinja2Templates:
+    return templates.TemplateResponse('404.html', {'request': req})
+
+
 @app.get('/signup')
-async def signup_page(req: Request):
+async def signup_page(req: Request) -> Jinja2Templates:
     return templates.TemplateResponse('signup.html', {'request': req})
 
 
 @app.post('/signup')
-async def signup(req: Request):
+async def signup(req: Request) -> RedirectResponse:
     pwd_context.hash(req)
     response = RedirectResponse(url='/home')
     response.set_cookie(key='access_token', value='generated_token')
@@ -45,14 +59,33 @@ async def signup(req: Request):
 
 
 @app.get('/login', response_class=HTMLResponse)
-async def login_page(req: Request):
+async def login_page(req: Request) -> Jinja2Templates:
     return templates.TemplateResponse('login.html', {'request': req})
 
 
 @app.post('/login')
 async def login(
-    req: Request, form_data: OAuth2PasswordRequestForm = Depends()
-):
+    req: Request,
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    credentials: HTTPBasicCredentials = Depends(http_basic),
+    email: str = Form(),
+    password: str = Form(),
+) -> Jinja2Templates:
+    # inputs
+    email = credentials.email
+    password = hashlib.md5(credentials.password.encode()).hexdigest()
+
+    user = db.session.query(SampleUser)\
+        .filter(SampleUser.email == email).first()
+    db.session.close()
+
+    if user is None or user.password != password:
+        error = 'wrong email or password...'
+        raise HTTPException(
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail=error,
+            headers={'WWW-Authenticate': 'Basic'},
+        )
     response = RedirectResponse(url='/home')
     response.set_cookie(key='access_token', value='generated_token')
     return response

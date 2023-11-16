@@ -1,19 +1,19 @@
 <h1>
-    <a href="{{ url_for('home') }}">Skill Sheet</a>
+    <a href="/home">Meishi</a>
 </h1>
-{% if current_user.is_authenticated %}
+{% if current_user %}
     <p>
-        Welcome back, <a href="{{ url_for('mypage_get', id_=current_user.id) }}">
+        Welcome back, <a href="">
             {% if current_user.first_name %}
-                {{ current_user.first_name }}.
+                {{ current_user }}.
             {% else %}
-                {{ current_user.email }}
+                {{ current_user }}
             {% endif %}
         </a>
     </p>
-    <a href="{{ url_for('logout') }}">Logout here.</a>
+    <a href="/logout">Logout here.</a>
 {% else %}
     <p>Welcome.</p>
-    <a href="{{ url_for('login') }}">Login here.</a>
-    <a href="{{ url_for('signup_get') }}">Signup here.</a>
+    <a href="/login">Login here.</a>
+    <a href="/signup">Signup here.</a>
 {% endif %}
