@@ -1,3 +1,4 @@
+import re
 from passlib.context import CryptContext
 
 from fastapi import FastAPI, Request, Depends, HTTPException, status, Form
@@ -14,7 +15,7 @@ from starlette.status import HTTP_401_UNAUTHORIZED
 from pydantic import BaseModel, EmailStr
 import hashlib
 
-from sample_table import SampleUser
+from sample_table import SampleUser, session
 
 app = FastAPI()
 templates = Jinja2Templates(directory='/src/api/templates')
@@ -52,6 +53,35 @@ async def signup_page(req: Request) -> Jinja2Templates:
 
 @app.post('/signup')
 async def signup(req: Request) -> RedirectResponse:
+    data = await req.form()
+    email = data.get('email')
+    password = data.get('password')
+    retype = data.get('retype')
+
+    pattern_email = re.compile(
+        r'^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$')
+    pattern_pw = re.compile(r'\w{6,20}')
+    errors = []
+    user_in_db = session.query(SampleUser)\
+        .filter(SampleUser.email==email).first()
+    if user_in_db is not None:
+        errors.append('user e-mail already exist.')
+    if password != retype:
+        errors.append('doesn\'t matched passwords.')
+    if pattern_email.match(email) is None:
+        errors.append('wrong e-mail address.')
+    if pattern_pw.match(password) is None:
+        errors.append('Please use half-width alphanumeric characters for your password between 6 and 20 characters.')
+
+    if errors:
+        return templates.TemplateResponse(
+            'signup.html', {'request': req, 'email': email, 'errors': errors})
+
+    user = SampleUser(email=email, password=password)
+    session.add(user)
+    session.commit()
+    session.close()
+
     pwd_context.hash(req)
     response = RedirectResponse(url='/home')
     response.set_cookie(key='access_token', value='generated_token')
@@ -75,9 +105,9 @@ async def login(
     email = credentials.email
     password = hashlib.md5(credentials.password.encode()).hexdigest()
 
-    user = db.session.query(SampleUser)\
+    user = session.query(SampleUser)\
         .filter(SampleUser.email == email).first()
-    db.session.close()
+    session.close()
 
     if user is None or user.password != password:
         error = 'wrong email or password...'

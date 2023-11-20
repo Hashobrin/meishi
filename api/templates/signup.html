@@ -3,13 +3,12 @@
 {% block body %}
     {% include 'alert.html' %}
     <form method="post" action="/signup">
-        {{ form.csrf_token }}
         <label for="email">E-mail address: </label>
-        {{ form.email }}
+        <input type="email" name="email" placeholder="sample@example.com">
         <label for="password">password: </label>
-        {{ form.password }}
+        <input type="password" name="password">
         <label for="retype">Retype your password: </label>
-        {{ form.retype }}
-        {{ form.submit }}
+        <input type="password" name="retype">
+        <button type="submit">Submit</button>
     </form>
 {% endblock %}

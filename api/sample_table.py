@@ -8,6 +8,9 @@ from sqlalchemy.dialects.mysql import INTEGER
 
 base = declarative_base()
 rdb_path = 'sqlite:///db.sqlite3'
+engine = create_engine(rdb_path, echo=True)
+session_maker = sessionmaker(bind=engine)
+session = session_maker()
 
 
 class SampleUser(base):
@@ -29,10 +32,6 @@ class SampleUser(base):
 
 
 def main():
-    engine = create_engine(rdb_path, echo=True)
-    session_maker = sessionmaker(bind=engine)
-    session = session_maker()
-
     if not os.path.isfile(rdb_path):
         base.metadata.create_all(bind=engine)
 
