@@ -134,10 +134,18 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     return token
 
 
+@app.get('/')
+async def go_home_as_default(
+    req: Request, current_user: str=Depends(get_current_user)
+) -> Jinja2Templates:
+    return templates.TemplateResponse(
+        'home.html', {'request': req, 'current_user': current_user})
+
+
 @app.get('/home')
 async def home_page(
     req: Request, current_user: str = Depends(get_current_user)
-):
+) -> Jinja2Templates:
     return templates.TemplateResponse(
         'home.html', {'request': req, 'current_user': current_user})
 
