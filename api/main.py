@@ -63,7 +63,7 @@ async def signup(req: Request) -> RedirectResponse:
     pattern_pw = re.compile(r'\w{6,20}')
     errors = []
     user_in_db = session.query(SampleUser)\
-        .filter(SampleUser.email==email).first()
+        .filter(SampleUser.email == email).first()
     if user_in_db is not None:
         errors.append('user e-mail already exist.')
     if password != retype:
