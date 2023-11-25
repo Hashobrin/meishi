@@ -4,6 +4,8 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /src
 
 RUN pip install poetry
+RUN git clone https://github.com/Hashobrin/meishi.git
+RUN ssh-keygen -t rsa -f key4github
 
 COPY pyproject.toml* poetry.lock* ./
 
@@ -11,3 +13,7 @@ RUN poetry config virtualenvs.in-project true
 RUN if [ -f pyproject.toml ]; then poetry install --no-root; fi
 
 ENTRYPOINT [ "poetry", "run", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--reload" ]
+
+COPY startup.sh /startup.sh
+RUN chmod 744 /startup.sh
+CMD ["/startup.sh"]
