@@ -1,9 +1,9 @@
 version: '3'
 services:
-  main-app:
+  build-test-app:
     build: .
     context: "./"
-    dockerfile: "dockerfile"
+    dockerfile: "dockerfile-test"
     volumes:
       - .dockervenv:/src/.venv
       - .:/src
