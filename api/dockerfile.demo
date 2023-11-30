@@ -16,9 +16,8 @@ COPY pyproject.toml* poetry.lock* /usr/src/
 RUN poetry config virtualenvs.in-project true
 RUN if [ -f pyproject.toml ]; then poetry install --no-root; fi
 
-ENTRYPOINT ["poetry", "run", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000", "--log-level", "trace", "--reload"]
+COPY ./api/entrypoint.sh /usr/src/api
+RUN chmod +x /usr/src/api/entrypoint.sh
+ENTRYPOINT ["/usr/src/api/entrypoint.sh"]
 
-COPY ./entrypoint.sh /usr/src/
-RUN chmod +x /usr/src/entrypoint.sh
-CMD ["/usr/src/entrypoint.sh"]
-# ENTRYPOINT ["entrypoint.sh"]
+# ENTRYPOINT ["poetry", "run", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--reload"]

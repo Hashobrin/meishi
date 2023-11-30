@@ -1,12 +1,22 @@
 version: '3'
 services:
-  demo-app:
-    build: .
-    context: "./"
-    dockerfile: "dockerfile-test"
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: dockerfile.demo
+    command: yarn start
     volumes:
-      - .dockervenv:/src/.venv
-      - .:/src
+      - ./frontend:/usr/src/api
+    ports:
+      - "3000:3000"
+  demo-app:
+    tty: true
+    build:
+      context: ./api
+      dockerfile: "dockerfile.demo"
+    volumes:
+      - .dockervenv:/usr/src/.venv
+      - .:/usr/src
     ports:
       - 8000:8000
   db:
