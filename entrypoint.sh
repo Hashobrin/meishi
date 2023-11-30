@@ -3,9 +3,9 @@
 
 docker-compose run --entrypoint \
     "poetry init \
-        --name build-test-app \
+        --name demo-app \
         --dependency fastapi \
         --dependency uvicorn[standard]" \
-    build-test-app
+    demo-app
 
-docker-compose run --entrypoint "poetry install --no-root" build-test-app
+docker-compose run --entrypoint "poetry install --no-root" demo-rr
