@@ -1,6 +1,7 @@
 import re
 from passlib.context import CryptContext
 
+import typing
 from fastapi import APIRouter, Request, Depends, HTTPException, status, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
@@ -50,11 +51,6 @@ async def sayhello(req: Request):
 async def sample_bootstrap(req: Request):
     return templates.TemplateResponse(
         'sample_bootstrap.html', {'request': req})
-
-
-# @router.exception_handler(404)
-# async def not_found(req: Request, exc: HTTPException) -> Jinja2Templates:
-#     return templates.TemplateResponse('404.html', {'request': req})
 
 
 @router.get('/signup')
