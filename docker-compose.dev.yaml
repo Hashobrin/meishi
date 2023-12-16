@@ -1,15 +1,15 @@
 version: '3'
 services:
-  main-app:
-    build: .
-    context: "./"
-    dockerfile: "dockerfile.dev"
+  dev-app:
+    build:
+      context: "./"
+      dockerfile: "./api/dockerfile.dev"
     volumes:
       - .dockervenv:/src/.venv
       - .:/src
     ports:
       - 8000:8000
-  db:
+  dev-db:
     image: mysql:8.0
     platform: linux/x86_64
     environment:
