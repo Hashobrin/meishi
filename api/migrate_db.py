@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 
-from api.models.task import Base
+from api.models.user import Base
 
 db_url = 'mysql+pymysql://root@db:3306/dev?charset=utf8'
 engine = create_engine(db_url, echo=True)
