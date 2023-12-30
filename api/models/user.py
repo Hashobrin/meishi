@@ -1,7 +1,7 @@
 import os
 import sys
 
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
 sys.path.append(os.pardir)
@@ -16,14 +16,14 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column('username',String(256))
-    email = Column('email', String(256))
-    password = Column('password', String(256))
+    username = Column(String(256))
+    email = Column(String(256))
+    password = Column(String(256))
 
-    def __init__(self, username, email, password):
-        self.username = username
-        self.email = email
-        self.password = password
+    # def __init__(self, username, email, password):
+    #     self.username = username
+    #     self.email = email
+    #     self.password = password
 
-    def __str__(self):
-        return str(self.id) + ':' + self.username
+    # def __str__(self):
+    #     return str(self.id) + ':' + self.username

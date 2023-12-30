@@ -1,9 +1,18 @@
-from sqlalchemy import create_engine
+import configparser
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from api.models.user import Base
 
-db_url = 'mysql+pymysql://root@db:3306/dev?charset=utf8'
-engine = create_engine(db_url, echo=True)
+config = configparser.ConfigParser()
+config.read('config.ini', encoding='utf-8')
+User, Pass, Host, Port = (
+    config.get('DEVELOP', 'User'),
+    config.get('DEVELOP', 'Pass'),
+    config.get('DEVELOP', 'Host'),
+    config.get('DEVELOP', 'Port'),
+)
+db_url = f'{User}://{Pass}@{Host}:{Port}/dev?charset=utf8'
+engine = create_async_engine(db_url, echo=True)
 
 
 def reset_database():
