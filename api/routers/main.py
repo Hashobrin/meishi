@@ -61,9 +61,9 @@ async def signup_page(req: Request):
 @router.post('/signup')
 async def signup(req: Request):
     data = await req.form()
-    email = data.get('email')
-    password = data.get('password')
-    retype = data.get('retype')
+    email = str(data.get('email'))
+    password = str(data.get('password'))
+    retype = str(data.get('retype'))
 
     pattern_email = re.compile(
         r'^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$')
@@ -84,7 +84,7 @@ async def signup(req: Request):
         return templates.TemplateResponse(
             'signup.html', {'request': req, 'email': email, 'errors': errors})
 
-    user = SampleUser(email=email, password=password)
+    user = SampleUser(email=email, password=password, username='')
     session.add(user)
     session.commit()
     session.close()
@@ -109,14 +109,13 @@ async def login(
     password: str = Form(),
 ):
     # inputs
-    email = credentials.email
     password = hashlib.md5(credentials.password.encode()).hexdigest()
 
     user = session.query(SampleUser)\
         .filter(SampleUser.email == email).first()
     session.close()
 
-    if user is None or user.password != password:
+    if user is None or str(user.password) != password:
         error = 'wrong email or password...'
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED,
