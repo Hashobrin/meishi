@@ -1,5 +1,12 @@
-docker-compose run --entrypoint dev-app \
-    "poetry run uvicorn api.main:app --host=0.0.0.0 --port=8000 --log-level trace --reload"
+docker compose run \
+    --entrypoint \
+        "poetry run uvicorn api.main:app \
+        --host=0.0.0.0 \
+        --port=8000 \
+        --log-level \
+        trace \
+        --reload" \
+    backend
 
 # docker-compose run --entrypoint \
 #     "poetry init \
