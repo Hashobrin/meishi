@@ -1,6 +1,6 @@
 import re
-from passlib.context import CryptContext
 
+from passlib.context import CryptContext
 import typing
 from fastapi import APIRouter, Request, Depends, HTTPException, status, Form
 from fastapi.templating import Jinja2Templates
@@ -15,8 +15,10 @@ from starlette.responses import RedirectResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
 from pydantic import BaseModel, EmailStr
 import hashlib
+from sqlalchemy.orm import Session
 
-from ..sample_table import SampleUser, session
+from api.db import get_db
+from api.models.user import User
 
 router = APIRouter()
 templates = Jinja2Templates(directory='/src/api/templates')
@@ -24,19 +26,10 @@ http_basic = HTTPBasic()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 responses = {
-    404: {'description': 'Item not found'},
     302: {'description': 'The item was moved'},
     403: {'description': 'Not enough privileges'},
+    404: {'description': 'Item not found'},
 }
-
-
-class User(BaseModel):
-    """
-    User model
-    """
-    username: str
-    email: EmailStr
-    password: str
 
 
 @router.get('/sayhello', responses={**responses, 200: {}})
@@ -59,7 +52,7 @@ async def signup_page(req: Request):
 
 
 @router.post('/signup')
-async def signup(req: Request):
+async def signup(req: Request, session: Session=Depends(get_db)):
     data = await req.form()
     email = str(data.get('email'))
     password = str(data.get('password'))
@@ -69,8 +62,7 @@ async def signup(req: Request):
         r'^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$')
     pattern_pw = re.compile(r'\w{6,20}')
     errors = []
-    user_in_db = session.query(SampleUser)\
-        .filter(SampleUser.email == email).first()
+    user_in_db = session.query(User).filter(User.email == email).first()
     if user_in_db is not None:
         errors.append('user e-mail already exist.')
     if password != retype:
@@ -84,7 +76,7 @@ async def signup(req: Request):
         return templates.TemplateResponse(
             'signup.html', {'request': req, 'email': email, 'errors': errors})
 
-    user = SampleUser(email=email, password=password, username='')
+    user = User(email=email, password=password, username='')
     session.add(user)
     session.commit()
     session.close()
@@ -103,6 +95,7 @@ async def login_page(req: Request):
 @router.post('/login')
 async def login(
     req: Request,
+    session:Session=Depends(get_db),
     form_data: OAuth2PasswordRequestForm = Depends(),
     credentials: HTTPBasicCredentials = Depends(http_basic),
     email: str = Form(),
@@ -111,8 +104,7 @@ async def login(
     # inputs
     password = hashlib.md5(credentials.password.encode()).hexdigest()
 
-    user = session.query(SampleUser)\
-        .filter(SampleUser.email == email).first()
+    user = session.query(User).filter(User.email == email).first()
     session.close()
 
     if user is None or str(user.password) != password:

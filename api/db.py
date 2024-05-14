@@ -6,7 +6,12 @@ async_db_url = "mysql+aiomysql://root@db:3306/dev?charset=utf8"
 
 async_engine = create_async_engine(async_db_url, echo=True)
 async_session = async_sessionmaker(
-    autocommit=False, autoflush=False, bind=async_engine, class_=AsyncSession, expire_on_commit=False)
+    autocommit=False,
+    autoflush=False,
+    bind=async_engine,
+    class_=AsyncSession,
+    expire_on_commit=False
+)
 
 Base = declarative_base()
 # class Base(DeclarativeBase):

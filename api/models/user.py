@@ -4,7 +4,7 @@ import sys
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
-sys.path.append(os.pardir)
+# sys.path.append(os.pardir)
 from api.db import Base
 
 
@@ -16,9 +16,9 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String(256))
-    email = Column(String(256))
-    password = Column(String(256))
+    username = Column(String(256), nullable=False)
+    email = Column(String(256), nullable=False)
+    password = Column(String(256), nullable=False)
 
     # def __init__(self, username, email, password):
     #     self.username = username
