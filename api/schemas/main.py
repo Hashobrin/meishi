@@ -8,7 +8,7 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     pass
 
-class UsarCreateResponse(UserCreate):
+class UserCreateResponse(UserCreate):
     id: int
 
     class Config:

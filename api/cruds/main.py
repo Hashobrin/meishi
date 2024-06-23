@@ -5,7 +5,7 @@ import api.schemas.main as main_schema
 
 
 async def create_main(
-        db: AsyncSession, user_create: main_schema.MainCreate
+        db: AsyncSession, user_create: main_schema.UserCreate
     ) -> user_model.User:
     user = user_model.User(**user_create.dict())
     db.add(user)
