@@ -10,18 +10,18 @@ services:
     ports:
       - 8000:8000
 
-#   db:
-#     image: mysql:8.0
-#     platform: linux/x86_64
-#     environment:
-#       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-#       MYSQL_DATABASE: 'db_for_app'
-#       TZ: 'Asia/Tokyo'
-#     volumes:
-#       - mysql_data:/var/lib/mysql
-#     command: --default-authentication-plugin=mysql_native_password
-#     ports:
-#       - 33306:3306
+  db:
+    image: mysql:8.0
+    platform: linux/x86_64
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_DATABASE: 'db_for_app'
+      TZ: 'Asia/Tokyo'
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - 33306:3306
 
-# volumes:
-#   mysql_data:
+volumes:
+  mysql_data:
