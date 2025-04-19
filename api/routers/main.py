@@ -11,6 +11,7 @@ from fastapi.security import (
     HTTPBasic,
     HTTPBasicCredentials,
 )
+from sqlmodel import select
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
 from pydantic import BaseModel, EmailStr
@@ -57,13 +58,17 @@ async def signup(req: Request, session: Session=Depends(get_db)):
     email = str(data.get('email'))
     password = str(data.get('password'))
     retype = str(data.get('retype'))
+    print(f"{email=}, {password=}, {retype=}")
 
     pattern_email = re.compile(
         r'^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$')
     pattern_pw = re.compile(r'\w{6,20}')
     errors = []
-    user_in_db = session.query(User).filter(User.email == email).first()
-    if user_in_db is not None:
+    # is_user_in_db = session.query(User).filter(User.email == email).first()
+    stmt = select(User).where(User.email==email)
+    result = await session.exec(stmt)
+    is_user_in_db = result.first()
+    if is_user_in_db:
         errors.append('user e-mail already exist.')
     if password != retype:
         errors.append('doesn\'t matched passwords.')

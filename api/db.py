@@ -1,10 +1,9 @@
 import configparser
 
-from sqlalchemy.ext.asyncio import (
-    create_async_engine, AsyncSession, async_sessionmaker)
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import declarative_base, DeclarativeBase
+from sqlmodel.ext.asyncio.session import AsyncSession
 
-# async_db_url = "mysql+aiomysql://root@db:3306/dev?charset=utf8"
 config = configparser.ConfigParser()
 config_ini_path = 'api/config.ini'
 
@@ -15,16 +14,17 @@ User, Pass, Host, Port = (
     config.get('DEVELOP', 'Host'),
     config.get('DEVELOP', 'Port'),
 )
-db_url = f'{User}://{Pass}@{Host}:{Port}/dev?charset=utf8'
+# db_url = f'{User}://{Pass}@{Host}:{Port}/dev?charset=utf8'
+db_url = 'mysql+aiomysql://root@db:3306/db_for_app?charset=utf8mb4'
 
 async_engine = create_async_engine(db_url, echo=True)
-async_session = async_sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=async_engine,
-    class_=AsyncSession,
-    expire_on_commit=False
-)
+# async_session = async_sessionmaker(
+#     autocommit=False,
+#     autoflush=False,
+#     bind=async_engine,
+#     class_=AsyncSession,
+#     expire_on_commit=False
+# )
 
 Base = declarative_base()
 # class Base(DeclarativeBase):
@@ -35,5 +35,5 @@ Base = declarative_base()
 
 
 async def get_db():
-    async with async_session() as session:
+    async with AsyncSession(async_engine) as session:
         yield session
