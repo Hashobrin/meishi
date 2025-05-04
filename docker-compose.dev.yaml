@@ -9,7 +9,7 @@ services:
       - .:/src
     working_dir: /src
     # command: sh -c "poetry run python -m debugpy --listen 0.0.0.0:5678 --wait-for-client -m uvicorn main:app --reload --proxy-headers --host='0.0.0.0' --port=8000"
-    command: sh -c "poetry run uvicorn api.main:app --host 0.0.0.0 --reload"
+    # command: sh -c "poetry run uvicorn api.main:app --host 0.0.0.0 --reload"
     ports:
       - 8000:8000
       - 5678:5678

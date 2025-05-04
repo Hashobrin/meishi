@@ -16,13 +16,13 @@ config_ini_path = 'api/config.ini'
 #     raise FileNotFoundError(
 #         errno.ENOENT, os.strerror(errno.ENOENT), config_ini_path)
 
-config.read(config_ini_path, encoding='utf-8')
-User, Pass, Host, Port = (
-    config.get('DEVELOP', 'User'),
-    config.get('DEVELOP', 'Pass'),
-    config.get('DEVELOP', 'Host'),
-    config.get('DEVELOP', 'Port'),
-)
+# config.read(config_ini_path, encoding='utf-8')
+# User, Pass, Host, Port = (
+#     config.get('DEVELOP', 'User'),
+#     config.get('DEVELOP', 'Pass'),
+#     config.get('DEVELOP', 'Host'),
+#     config.get('DEVELOP', 'Port'),
+# )
 # db_url = f'{User}://{Pass}@{Host}:{Port}/dev?charset=utf8'
 db_url = 'mysql+aiomysql://root@db:3306/db_for_app?charset=utf8mb4'
 engine = create_async_engine(db_url, echo=True)

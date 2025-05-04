@@ -17,6 +17,7 @@ from starlette.status import HTTP_401_UNAUTHORIZED
 from pydantic import BaseModel, EmailStr
 import hashlib
 from sqlalchemy.orm import Session
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from api.db import get_db
 from api.models.user import User
@@ -53,7 +54,7 @@ async def signup_page(req: Request):
 
 
 @router.post('/signup')
-async def signup(req: Request, session: Session=Depends(get_db)):
+async def signup(req: Request, session: AsyncSession = Depends(get_db)):
     data = await req.form()
     email = str(data.get('email'))
     password = str(data.get('password'))
@@ -64,11 +65,8 @@ async def signup(req: Request, session: Session=Depends(get_db)):
         r'^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$')
     pattern_pw = re.compile(r'\w{6,20}')
     errors = []
-    # is_user_in_db = session.query(User).filter(User.email == email).first()
-    stmt = select(User).where(User.email==email)
-    result = await session.exec(stmt)
-    is_user_in_db = result.first()
-    if is_user_in_db:
+    result = await session.exec(select(User).where(User.email==email))
+    if result.first():
         errors.append('user e-mail already exist.')
     if password != retype:
         errors.append('doesn\'t matched passwords.')
@@ -83,10 +81,9 @@ async def signup(req: Request, session: Session=Depends(get_db)):
 
     user = User(email=email, password=password, username='')
     session.add(user)
-    session.commit()
-    session.close()
+    await session.commit()
 
-    pwd_context.hash(req)
+    hashed_password = pwd_context.hash(password)
     response = RedirectResponse(url='/home')
     response.set_cookie(key='access_token', value='generated_token')
     return response

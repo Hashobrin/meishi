@@ -39,15 +39,15 @@
           <form method="post" action="/signup" class="form-signin">
             <div class="mb-3">
               <label for="email" class="form-label">メールアドレス</label>
-              <input type="email" class="form-control" id="email" placeholder="メールアドレスを入力" required autofocus>
+              <input type="email" class="form-control" id="email" name="email" placeholder="メールアドレスを入力" required autofocus>
             </div>
             <div class="mb-3">
               <label for="password" class="form-label">パスワード</label>
-              <input type="password" class="form-control" id="password" placeholder="パスワードを入力" required>
+              <input type="password" class="form-control" id="password" name="password" placeholder="パスワードを入力" required>
             </div>
             <div class="mb-3">
               <label for="retype" class="form-label">パスワード確認</label>
-              <input type="password" class="form-control" id="retype" placeholder="再度パスワードを入力" required>
+              <input type="password" class="form-control" id="retype" name="retype" placeholder="再度パスワードを入力" required>
             </div>
             <button type="submit" class="btn btn-primary w-100">サインアップ</button>
           </form>
@@ -57,11 +57,11 @@
     // パスワード確認用スクリプト
     document.querySelector("form").addEventListener("submit", function(event) {
         const password = document.getElementById("password").value;
-        const confirmPassword = document.getElementById("confirmPassword").value;
+        const retype = document.getElementById("retype").value;
 
-        if (password !== confirmPassword) {
-        event.preventDefault();
-        alert("パスワードが一致しません。再入力してください。");
+        if (password !== retype) {
+          event.preventDefault();
+          alert("パスワードが一致しません。再入力してください。");
         }
     });
     </script>
