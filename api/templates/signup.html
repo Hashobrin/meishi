@@ -4,7 +4,6 @@
     Signup
 {% endblock %}
 {% block head %}
-<!-- <link href="{{ url_for('static', path='css/login.css') }}" rel="stylesheet"> -->
 <style>
     .form-signup {
       max-width: 330px;
@@ -14,32 +13,24 @@
     .form-signup .form-floating:focus-within {
       z-index: 2;
     }
+    .container {
+      margin-top: 80px; /* ナビゲーションバーの下に余白を追加 */
+    }
 </style>
 {% endblock %}
 
 {% block body %}
-    {% include 'alert.html' %}
-    <!-- <div class="text-center" style="display: flex; flex-direction: column; min-height: 80vh">
-        <form method="post" action="/signup" class="form-signin">
-            <h1 class="h3 mb-3 font-weight-normal">Signup</h1>
-            <label for="email" class="sr-only">E-mail address: </label>
-            <input type="email" name="email" id="email" class="form-control" placeholder="sample@example.com" required autofocus>
-            <label for="password" class="sr-only">password: </label>
-            <input type="password" name="password" class="form-control" placeholder="Password" required>
-            <label for="retype" class="sr-only">Retype your password: </label>
-            <input type="password" name="retype" class="sr-only">
-            <button type="submit" class="btn btn-lg btn-primary btn-block">
-                Submit
-            </button>
-        </form>
-    </div> -->
     <div class="container d-flex align-items-center justify-content-center vh-100">
         <div class="card p-4 shadow-sm" style="max-width: 400px; width: 100%;">
           <h2 class="text-center mb-4">サインアップ</h2>
+          
+          <!-- エラーメッセージを表示 -->
+          {% include 'alert.html' %}
+          
           <form method="post" action="/signup" class="form-signin">
             <div class="mb-3">
               <label for="email" class="form-label">メールアドレス</label>
-              <input type="email" class="form-control" id="email" name="email" placeholder="メールアドレスを入力" required autofocus>
+              <input type="email" class="form-control" id="email" name="email" value="{{ email or '' }}" placeholder="メールアドレスを入力" required autofocus>
             </div>
             <div class="mb-3">
               <label for="password" class="form-label">パスワード</label>

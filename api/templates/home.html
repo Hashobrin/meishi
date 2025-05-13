@@ -1,8 +1,59 @@
 {% extends 'base.html' %}
 
-{% block title %}
-    Home
-{% endblock %}
+{% block title %}Meishi - Resume Management{% endblock %}
+
 {% block body %}
-    <h1>Welcome back!</h1>
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow">
+            <div class="card-body">
+                <h1 class="display-5 mb-4 text-center">Professional Resume Management</h1>
+                <div class="text-center mb-4">
+                    {% if current_user.first_name %}
+                    <p class="lead">Welcome back, {{ current_user.first_name }}!</p>
+                    {% else %}
+                    <p class="lead">Welcome back, {{ current_user.username }}!</p>
+                    {% endif %}
+                    <div class="mt-4">
+                        <a href="/profile" class="btn btn-primary">View My Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if users %}
+        <div class="card mt-4 shadow">
+            <div class="card-header bg-light">
+                <h2 class="h4 mb-0">Browse Professionals</h2>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th>
+                                <th>Skills</th>
+                                <th>Since</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>
+                                    <a href="/profile/{{ user.User.id }}" class="text-decoration-none fw-bold">
+                                        {{ user.User.first_name }} {{ user.User.last_name }}
+                                    </a>
+                                </td>
+                                <td>{% if user.Skill %}{{ user.Skill.name }}{% else %}—{% endif %}</td>
+                                <td>{% if user.Skill %}{{ user.Skill.start_date }}{% else %}—{% endif %}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}
